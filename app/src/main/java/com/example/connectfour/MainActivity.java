@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.connectfour.databinding.ActivityMainBinding;
 
@@ -15,15 +16,27 @@ public class MainActivity extends AppCompatActivity {
     
     private ConnectFourGame connectFourGame;
     
+    EditText editBoardHeight;
+    EditText editBoardWidth;
+    EditText editWinningConnect;
+    
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         
         super.onCreate( savedInstanceState );
         binding = ActivityMainBinding.inflate( getLayoutInflater( ) );
         setContentView( binding.getRoot( ) );
-
+        
         Button startGame = binding.button;
-    
+        
+        editBoardHeight = binding.editBoardHeight;
+        editBoardWidth = binding.editBoardWidth;
+        editWinningConnect = binding.editWinningConnect;
+        
+        editBoardHeight.setText( "6" );
+        editBoardWidth.setText( "7" );
+        editWinningConnect.setText( "4" );
+        
     }
     
     public void playGame( View view ) {
@@ -32,12 +45,15 @@ public class MainActivity extends AppCompatActivity {
     
     public void playGame( ) {
         
-        // create pop-up menu to ask for dimensions
-//        connectFourGame = new ConnectFourGame( height, width, connect );
-        connectFourGame = new ConnectFourGame( );
+        // create game based on entered sizes
+        connectFourGame = new ConnectFourGame( getViewInt( editBoardHeight ), getViewInt( editBoardWidth ), getViewInt( editWinningConnect ) );
         
         // open the activity for the game
         openGame( );
+    }
+    
+    public static int getViewInt( EditText text ) {
+        return Integer.parseInt( text.getText( ).toString( ) );
     }
     
     public void storeHeight( View view ) {
