@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#804fc4"
+    tools:context=".GameActivity">
+
+    <GridLayout
+        android:id="@+id/grid_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5sp"
+        android:rowCount="5"
+        android:ColumnCount="2">
+
+        <Button
+            android:id="@+id/object0"
+            android:layout_row="0"
+            android:layout_rowWeight="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_gravity="fill"
+            android:layout_margin="5sp"
+            android:text="Button"
+            tools:ignore="DuplicateSpeakableTextCheck" />
+
+        <Button
+            android:id="@+id/object1"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_margin="5sp"
+            android:text="Button"/>
+
+        <Button
+            android:id="@+id/object2"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_margin="5sp"
+            android:text="Button"/>
+
+        <Button
+            android:id="@+id/object3"
+            android:layout_gravity="fill"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_margin="5sp"
+            android:text="Button"/>
+
+
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

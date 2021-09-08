@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Connect Four</string>
+    <string name="start_button">Play Connect Four</string>
+    <string name="board_height_header">Board Height</string>
+    <string name="board_height_input">Enter board height</string>
+    <string name="board_width_header">Board Width</string>
+    <string name="board_width_input">Enter board width</string>
+    <string name="winning_connect_header">Winning Connect</string>
+    <string name="winning_connect_input">Enter winning connect</string>
+</resources>

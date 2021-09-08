@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/beforeLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/rounded_layout_background"
+        android:backgroundTint="@color/grey"
+        android:fadingEdge="horizontal"
+        android:fadingEdgeLength="100dp"
+        android:orientation="vertical"
+        android:requiresFadingEdge="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <TextView
+            android:id="@+id/boardHeight"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="@string/board_height_header"
+            android:textColor="#000000"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/editBoardWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:autofillHints="@string/board_height_input"
+            android:ems="18"
+            android:hint="@string/board_width_input"
+            android:includeFontPadding="false"
+            android:inputType="number"
+            android:textSize="18sp"
+            tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/boardWidth"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/board_width_header"
+            android:textColor="#000000"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/editWinningConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:autofillHints="@string/board_height_input"
+            android:ems="18"
+            android:hint="@string/winning_connect_input"
+            android:includeFontPadding="false"
+            android:inputType="number"
+            android:textSize="18sp"
+            tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/winningConnect"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/winning_connect_header"
+            android:textColor="#000000"
+            android:textSize="25sp" />
+
+        <EditText
+            android:id="@+id/editBoardHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:autofillHints="@string/board_height_input"
+            android:ems="18"
+            android:hint="@string/board_height_input"
+            android:includeFontPadding="false"
+            android:inputType="number"
+            android:textSize="18sp"
+            tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck,TouchTargetSizeCheck" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:onClick="playGame"
+        android:text="@string/start_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/beforeLinearLayout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/beforeLinearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/beforeLinearLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
