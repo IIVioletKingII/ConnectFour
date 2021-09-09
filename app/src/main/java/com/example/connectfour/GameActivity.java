@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.GridLayout;
 
@@ -47,6 +48,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		String titleText = "" + connectFourGame.getPanelHeight( ) + "*" + connectFourGame.getPanelWidth( ) + " Connect Game";
 		title.setText( titleText );
 
+		gridLayout.setOnClickListener( ( v ) -> {
+			if( !connectFourGame.timerStarted( ) )
+				connectFourGame.startTimer( title );
+		} );
+
 	}
 
 	private void initSquares( ) {
@@ -62,7 +68,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		DisplayMetrics displayMetrics = new DisplayMetrics( );
 		getWindowManager( ).getDefaultDisplay( ).getMetrics( displayMetrics );
 
-		double gridLayoutWidth = (double) displayMetrics.widthPixels;
+		double gridLayoutWidth = displayMetrics.widthPixels;
 
 		int pixelHeight = (int) (gridLayoutHeight / panelHeight - 2 * border);
 		int pixelWidth = (int) (gridLayoutWidth / panelWidth - 2 * border);

@@ -37,7 +37,7 @@
                 android:id="@+id/gameTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="80dp"
+                android:layout_marginStart="48dp"
                 android:layout_marginEnd="152dp"
                 android:fadingEdge="horizontal"
                 android:fadingEdgeLength="50dp"
