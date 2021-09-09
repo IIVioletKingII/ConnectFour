@@ -7,4 +7,9 @@
     <string name="board_width_input">Enter board width</string>
     <string name="winning_connect_header">Winning Connect</string>
     <string name="winning_connect_input">Enter winning connect</string>
+    <string name="game_title">6*7 Connect Game</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 </resources>

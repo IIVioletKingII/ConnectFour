@@ -6,15 +6,60 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#804fc4"
+    android:theme="@style/NoActionBar"
     tools:context=".GameActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/game_app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/edit_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/gameTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="152dp"
+                android:fadingEdge="horizontal"
+                android:fadingEdgeLength="50dp"
+                android:text="@string/game_title"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/edit_toolbar" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <GridLayout
         android:id="@+id/grid_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="5sp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         android:columnCount="2"
@@ -22,49 +67,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/game_app_bar_layout">
+        <!--
 
         <Button
-            android:id="@+id/object0"
+            android:id="@+id/grid0_0"
             android:layout_row="0"
             android:layout_rowWeight="1"
             android:layout_column="0"
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="5sp"
-            android:text="Button"
-            tools:ignore="DuplicateSpeakableTextCheck" />
-
-        <Button
-            android:id="@+id/object1"
-            android:layout_row="0"
-            android:layout_rowWeight="1"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="5sp"
-            android:text="Button" />
-
-        <Button
-            android:id="@+id/object2"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="5sp"
-            android:text="Button" />
-
-        <Button
-            android:id="@+id/object3"
-            android:layout_row="1"
-            android:layout_rowWeight="1"
-            android:layout_column="1"
-            android:layout_columnWeight="1"
-            android:layout_gravity="fill"
-            android:layout_margin="5sp"
-            android:text="Button" />
-
+            tools:ignore="DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+-->
 
     </GridLayout>
 
