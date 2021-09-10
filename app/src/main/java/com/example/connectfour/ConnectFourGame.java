@@ -78,6 +78,7 @@ public class ConnectFourGame {
 		gameTimer.schedule( new TimerTask( ) {
 			@Override
 			public void run( ) {
+
 				String headerText = "Time: " + getShortTime( true );
 				new Handler( Looper.getMainLooper( ) ).post( ( ) -> headerTextView.setText( headerText ) );
 			}
@@ -85,6 +86,7 @@ public class ConnectFourGame {
 	}
 
 	public double getDoubleTime( ) {
+
 		return System.currentTimeMillis( ) / 1000d - startTime;
 	}
 
@@ -115,26 +117,32 @@ public class ConnectFourGame {
 	}
 
 	public boolean timerStarted( ) {
+
 		return startTime != -1d;
 	}
 
 	public int getPanelHeight( ) {
+
 		return panel.length;
 	}
 
 	public int getPanelWidth( ) {
+
 		return panel[0].length;
 	}
 
 	public int getWinningConnect( ) {
+
 		return winningConnect;
 	}
 
 	public void setState( int row, int column, PositionState state ) {
+
 		panel[row][column] = state;
 	}
 
 	public PositionState getState( int row, int column ) {
+
 		return panel[row][column];
 	}
 
@@ -187,6 +195,7 @@ public class ConnectFourGame {
 	 * @return if there is a vertical connect starting in this space going down three more spaces
 	 */
 	private boolean findVerticalConnect( int col, int row ) {
+
 		PositionState start = panel[row][col];
 		boolean fits = panel.length > row + (winningConnect - 1);
 		return start != PositionState.EMPTY &&   /* fits && */   start == panel[row + 1][col] && start == panel[row + 2][col] && start == panel[row + 3][col];
@@ -200,6 +209,7 @@ public class ConnectFourGame {
 	 * @return if there is a horizontal connect starting in this space going right three more spaces
 	 */
 	private boolean findHorizontalConnect( int col, int row ) {
+
 		PositionState start = panel[row][col];
 		boolean fits = panel[0].length > col + (winningConnect - 1);
 		return start != PositionState.EMPTY &&   /* fits && */   start == panel[row][col + 1] && start == panel[row][col + 2] && start == panel[row][col + 3];
@@ -213,6 +223,7 @@ public class ConnectFourGame {
 	 * @return if there is a horizontal connect starting in this space going down and right three more spaces
 	 */
 	private boolean findAngledRightConnect( int col, int row ) {
+
 		PositionState start = panel[row][col];
 		boolean fits = panel.length > row + (winningConnect - 1) && panel[0].length > col + (winningConnect - 1);
 		return start != PositionState.EMPTY &&   /* fits && */   start == panel[row + 1][col + 1] && start == panel[row + 2][col + 2] && start == panel[row + 3][col + 3];
@@ -226,6 +237,7 @@ public class ConnectFourGame {
 	 * @return if there is a horizontal connect starting in this space going down and left three more spaces
 	 */
 	private boolean findAngledLeftConnect( int col, int row ) {
+
 		PositionState start = panel[row][col];
 		boolean fits = panel.length > row + (winningConnect - 1) && 0 <= col - (winningConnect - 1);
 		return start != PositionState.EMPTY &&   /* fits && */   start == panel[row + 1][col - 1] && start == panel[row + 2][col - 2] && start == panel[row + 3][col - 3];
