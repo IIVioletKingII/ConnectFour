@@ -3,18 +3,24 @@ package com.example.connectfour;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.GridLayout;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,6 +29,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 	private ConnectFourGame connectFourGame;
 
 	public static int border = 2;
+
+	public int squareSize = 0;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -48,7 +56,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		String titleText = "" + connectFourGame.getPanelHeight( ) + "*" + connectFourGame.getPanelWidth( ) + " Connect Game";
 		title.setText( titleText );
 
+		AtomicInteger toastShowTimes = new AtomicInteger( );
+
+		AtomicReference<Toast> toastMessage = new AtomicReference<>( Toast.makeText( this, "initiated toast", Toast.LENGTH_SHORT ) );
+
 		gridLayout.setOnClickListener( ( v ) -> {
+			toastMessage.get( ).cancel( );
+			toastMessage.set( Toast.makeText( this, "Display " + (toastShowTimes.incrementAndGet( )), Toast.LENGTH_SHORT ) );
+			toastMessage.get( ).show( );
+
 			if( !connectFourGame.timerStarted( ) )
 				connectFourGame.startTimer( title );
 		} );
@@ -73,7 +89,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		int pixelHeight = (int) (gridLayoutHeight / panelHeight - 2 * border);
 		int pixelWidth = (int) (gridLayoutWidth / panelWidth - 2 * border);
 
-		int squareSize = panelWidth > panelHeight ? pixelWidth : pixelHeight;
+		squareSize = panelWidth > panelHeight ? pixelWidth : pixelHeight;
 
 		new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.removeAllViews( ) );
 
@@ -85,19 +101,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		for( int height = 0; height < panelHeight; height++ ) {
 			for( int width = 0; width < panelWidth; width++ ) {
 
-				Button curButton = new Button( this );
-				String buttonText = "" + height + "-" + width;
-				curButton.setText( buttonText );
-//                curButton.setHighlightColor( Color.BLUE );
-				curButton.setPadding( border, border, border, border );
+				ImageView curGridPos = new ImageView( this );
+				String gridPosText = "" + height + "-" + width;
 
-				curButton.setWidth( squareSize );
-				curButton.setMinimumWidth( squareSize );
+				curGridPos.setBackgroundResource( R.drawable.piece );
+				Drawable buttonDrawable = curGridPos.getBackground( );
+				buttonDrawable = DrawableCompat.wrap( buttonDrawable );
+				// the color is a direct color int and not a color resource
+				DrawableCompat.setTint( buttonDrawable, Color.BLUE );
+				curGridPos.setBackground( buttonDrawable );
 
-				curButton.setHeight( squareSize );
-				curButton.setMinimumHeight( squareSize );
+				curGridPos.setMinimumWidth( squareSize );
+				curGridPos.setMaxWidth( squareSize );
 
-				new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.addView( curButton ) );
+				curGridPos.setMinimumHeight( squareSize );
+				curGridPos.setMaxHeight( squareSize );
+
+				new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.addView( curGridPos ) );
 			}
 		}
 
