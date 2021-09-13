@@ -3,9 +3,11 @@ package com.example.connectfour;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
-import android.content.res.ColorStateList;
+import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +18,7 @@ import android.widget.GridLayout;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -24,9 +27,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 	private ConnectGame connectGame;
 
-	public static int border = 2;
-
 	public int squareSize = 0;
+	public int layoutBorder = 15;
 
 	private ImageView[][] piecePanel;
 
@@ -92,8 +94,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 		double gridLayoutWidth = displayMetrics.widthPixels;
 
-		int pixelHeight = (int) (gridLayoutHeight / panelHeight - 2 * border);
-		int pixelWidth = (int) (gridLayoutWidth / panelWidth - 2 * border);
+		int pixelHeight = (int) (gridLayoutHeight / panelHeight - 2 * layoutBorder);
+		int pixelWidth = (int) (gridLayoutWidth / panelWidth - 2 * layoutBorder);
 
 		squareSize = panelWidth > panelHeight ? pixelWidth : pixelHeight;
 
@@ -107,30 +109,44 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		for( int height = 0; height < panelHeight; height++ ) {
 			for( int width = 0; width < panelWidth; width++ ) {
 
-				piecePanel[height][width] = new ImageView( this );
+				piecePanel[height][width] = createBasicSquare( );
+
 				String gridPosText = height + "_" + width;
 				piecePanel[height][width].setTooltipText( gridPosText );
 
 				piecePanel[height][width].setOnClickListener( ( v ) -> {
-					Log.e( "ONCLICK", gridPosText );
+					Log.i( "ONCLICK", gridPosText );
 					gridPosClicked( v );
 				} ); // gridPosClicked
 
-				piecePanel[height][width].setBackgroundResource( R.drawable.piece );
-
 				ConnectGame.setBGColor( piecePanel[height][width], Color.BLUE );
-
-				piecePanel[height][width].setMinimumWidth( squareSize );
-				piecePanel[height][width].setMaxWidth( squareSize );
-
-				piecePanel[height][width].setMinimumHeight( squareSize );
-				piecePanel[height][width].setMaxHeight( squareSize );
 
 				ImageView curGridPos = piecePanel[height][width];
 
 				new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.addView( curGridPos ) );
 			}
 		}
+	}
+
+	public ImageView createBasicSquare( ) {
+
+		ImageView tempImageView = new ImageView( this );
+
+		tempImageView.setBackgroundResource( R.drawable.piece );
+//		tempImageView.setBord
+
+		// https://stackoverflow.com/questions/3416087/how-to-set-margin-of-imageview-using-code-not-xml
+		LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT );
+		layoutParams.setMargins( layoutBorder, layoutBorder, layoutBorder, layoutBorder );
+		tempImageView.setLayoutParams( layoutParams );
+
+		tempImageView.setMinimumWidth( squareSize );
+		tempImageView.setMaxWidth( squareSize );
+
+		tempImageView.setMinimumHeight( squareSize );
+		tempImageView.setMaxHeight( squareSize );
+
+		return tempImageView;
 	}
 
 	public void gridPosClicked( View view ) {
@@ -164,20 +180,40 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		if( pieceTargetPosition == -1 )
 			return false;
 
+		ConstraintLayout layout = findViewById( R.id.layout );
 
-			/*
-			// transition
-			ImageView hiddenImage = new ImageView( this );
-			float x = piecePanel[0][pieceXPos].getX( );
-			hiddenImage.setX( x );
+		// transition
+		ImageView hiddenImage = createBasicSquare( );
+//		hiddenImage.setY( 100f );
+		ConnectGame.setBGColor( hiddenImage, playerOne ? Color.RED : Color.YELLOW );
 
-			ConnectGame.setBGColor( hiddenImage, playerOne ? Color.RED : Color.YELLOW );
-*/
-		//
+		layout.addView( hiddenImage );
+//		new Handler( Looper.getMainLooper( ) ).post( ( ) ->  );
 
-		ConnectGame.setBGColor( piecePanel[pieceTargetPosition][pieceXPos], playerOne ? Color.RED : Color.YELLOW );
+		hiddenImage.setX( piecePanel[0][pieceXPos].getX( ) );
+		hiddenImage.setY( 0 );
+
+		//=================
+
+		long waitTime = 750;
+
+		ObjectAnimator animation = ObjectAnimator.ofFloat( hiddenImage, "translationY", piecePanel[pieceTargetPosition][pieceXPos].getY( ) + /*squareSize +*/ (1f * squareSize) + 2 * layoutBorder );
+		animation.setDuration( waitTime );
+		animation.start( );
+
 		connectGame.setState( pieceTargetPosition, pieceXPos, playerOne ? ConnectGame.PositionState.PLAYER_ONE : ConnectGame.PositionState.PLAYER_TWO );
 
+		new Thread( ( ) -> {
+			long startTime = System.currentTimeMillis( );
+			while( System.currentTimeMillis( ) < startTime + waitTime /*+ 10*/ ) ;
+			ConnectGame.setBGColor( piecePanel[pieceTargetPosition][pieceXPos], playerOne ? Color.RED : Color.YELLOW );
+			new Handler( Looper.getMainLooper( ) ).post( ( ) -> layout.removeView( hiddenImage ) );
+		} ).start( );
+
+		//=================
+
+
+//		hiddenImage.remo
 
 		return true;
 	}
@@ -187,14 +223,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 	 * @return the x and y positions of a grid position where x = int[0] and y = int[1]
 	 */
 	private int[] getGridPos( @NonNull String gridPosToolTip ) {
-
-		return new int[]{ Integer.parseInt( gridPosToolTip.substring( 2, 3 ) ), Integer.parseInt( gridPosToolTip.substring( 0, 1 ) ) };
+		if( gridPosToolTip.contains( "_" ) )
+			return new int[]{ Integer.parseInt( gridPosToolTip.substring( gridPosToolTip.indexOf( "_" ) + 1 ) ), Integer.parseInt( gridPosToolTip.substring( 0, gridPosToolTip.indexOf( "_" ) ) ) };
+		return new int[]{ 0, 0 };
 	}
-
 
 	@Override
 	protected void onResume( ) {
-
+		initToolbar( );
 		super.onResume( );
 	}
 
