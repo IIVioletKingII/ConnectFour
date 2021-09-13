@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.connectfour.databinding.ActivityMainBinding;
@@ -14,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private ActivityMainBinding binding;
 
-	private ConnectFourGame connectFourGame;
+	private ConnectGame connectGame;
 
 	EditText editBoardHeight;
 	EditText editBoardWidth;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 	public void playGame( ) {
 
 		// create game based on entered sizes
-		connectFourGame = new ConnectFourGame( getViewInt( editBoardHeight ), getViewInt( editBoardWidth ), getViewInt( editWinningConnect ) );
+		connectGame = new ConnectGame( getViewInt( editBoardHeight ), getViewInt( editBoardWidth ), getViewInt( editWinningConnect ) );
 
 		// open the activity for the game
 		openGame( );
@@ -56,39 +55,12 @@ public class MainActivity extends AppCompatActivity {
 		return Integer.parseInt( text.getText( ).toString( ) );
 	}
 
-	public void storeHeight( View view ) {
-
-		storeHeight( );
-	}
-
-	public void storeHeight( ) {
-
-	}
-
-	public void storeWidth( View view ) {
-
-		storeWidth( );
-	}
-
-	public void storeWidth( ) {
-
-	}
-
-	public void storeConnectLength( View view ) {
-
-		storeConnectLength( );
-	}
-
-	public void storeConnectLength( ) {
-
-	}
-
 	public void openGame( ) {
 
 		Intent intent = new Intent( this, GameActivity.class );
-		intent.putExtra( "GAME_HEIGHT", connectFourGame.getPanelHeight( ) )
-				.putExtra( "GAME_WIDTH", connectFourGame.getPanelWidth( ) )
-				.putExtra( "GAME_CONNECT", connectFourGame.getWinningConnect( ) );
+		intent.putExtra( "GAME_HEIGHT", connectGame.getPanelHeight( ) )
+				.putExtra( "GAME_WIDTH", connectGame.getPanelWidth( ) )
+				.putExtra( "GAME_CONNECT", connectGame.getWinningConnect( ) );
 		startActivity( intent );
 
 	}

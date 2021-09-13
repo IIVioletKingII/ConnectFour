@@ -1,15 +1,12 @@
 package com.example.connectfour;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,24 +17,22 @@ import android.widget.GridLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
 	private GridLayout gridLayout;
 
-	private ConnectFourGame connectFourGame;
+	private ConnectGame connectGame;
 
 	public static int border = 2;
 
 	public int squareSize = 0;
 
-	private ImageView[][] pieceGrid;
+	private ImageView[][] piecePanel;
 
-	private boolean playerOneTurn;
+	TextView titleView;
+
+	boolean timerStarted = false;
 
 	@Override
 	protected void onCreate( Bundle savedInstanceState ) {
@@ -45,99 +40,47 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.activity_game );
 
-		connectFourGame = new ConnectFourGame( );
+		connectGame = new ConnectGame( );
 
-		int panelHeight = getIntent( ).getIntExtra( "GAME_HEIGHT", connectFourGame.getPanelHeight( ) );
-		int panelWidth = getIntent( ).getIntExtra( "GAME_WIDTH", connectFourGame.getPanelWidth( ) );
-		int winningConnect = getIntent( ).getIntExtra( "GAME_CONNECT", connectFourGame.getWinningConnect( ) );
+		int panelHeight = getIntent( ).getIntExtra( "GAME_HEIGHT", connectGame.getPanelHeight( ) );
+		int panelWidth = getIntent( ).getIntExtra( "GAME_WIDTH", connectGame.getPanelWidth( ) );
+		int winningConnect = getIntent( ).getIntExtra( "GAME_CONNECT", connectGame.getWinningConnect( ) );
 
-		connectFourGame = new ConnectFourGame( panelHeight, panelWidth, winningConnect );
+		connectGame = new ConnectGame( panelHeight, panelWidth, winningConnect );
 
 		gridLayout = findViewById( R.id.grid_layout );
 
-		new Thread( this::initSquares ).start( );
-
 		initToolbar( );
 
-		TextView title = findViewById( R.id.gameTitle );
+		piecePanel = new ImageView[ /*rows*/ panelHeight][ /*columns*/ panelWidth];
+
+		new Thread( this::initSquares ).start( );
+
+		titleView = findViewById( R.id.gameTitle );
 		String titleText = "" + panelHeight + "*" + panelWidth + " Connect Game";
-		title.setText( titleText );
+		titleView.setText( titleText );
 
-		pieceGrid = new ImageView[ /*rows*/ panelHeight][ /*columns*/ panelWidth];
-
-		AtomicInteger toastShowTimes = new AtomicInteger( );
-
-		AtomicReference<Toast> toastMessage = new AtomicReference<>( Toast.makeText( this, "initiated toast", Toast.LENGTH_SHORT ) );
+		connectGame.setTitleView( titleView );
 
 		gridLayout.setOnClickListener( ( v ) -> {
-			toastMessage.get( ).cancel( );
-			toastMessage.set( Toast.makeText( this, "Display " + (toastShowTimes.incrementAndGet( )), Toast.LENGTH_SHORT ) );
-			toastMessage.get( ).show( );
 
-			if( !connectFourGame.timerStarted( ) )
-				connectFourGame.startTimer( title );
+			if( !timerStarted )
+				timerStarted = connectGame.startTimer( );
 		} );
-
-		new Thread( ( ) -> {
-
-			while( pieceGrid[4][3] == null ) ;
-
-			ImageView examplePos = pieceGrid[1][3];
-			Drawable buttonDrawable = examplePos.getBackground( );
-			buttonDrawable = DrawableCompat.wrap( buttonDrawable );
-			// the color is a direct color int and not a color resource
-			DrawableCompat.setTint( buttonDrawable, Color.RED );
-			examplePos.setBackground( buttonDrawable );
-		} )/*.start( )*/;
-
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	public void gridPosClicked( View view ) {
+	private void initToolbar( ) {
 
-		String toolTipText = view.getTooltipText( ).toString( );
-
-		// set bottom of that column to be person's turn
-
-		ImageView currentPosition = (ImageView) view;
-
-		if( currentPosition != null ) {
-
-			int x = Integer.parseInt( toolTipText.substring( 0, 1 ) );
-			int y = Integer.parseInt( toolTipText.substring( 2, 3 ) );
-
-//			runTransitionToPos( x, y, playerOneTurn );
-
-			setColor( currentPosition, /*red's turn ? */Color.RED /* : Color.YELLOW*/ );
-//			new Thread( () -> setColor( currentPosition, /*red's turn ? */Color.RED /* : Color.YELLOW*/ ) ).start( );
-			Toast.makeText( this, "current: " + toolTipText, Toast.LENGTH_SHORT ).show( );
-		}
+		Toolbar toolbar = findViewById( R.id.edit_toolbar );
+		toolbar.setTitle( "" );
+		toolbar.setNavigationIcon( ContextCompat.getDrawable( this, R.drawable.back_arrow ) );
+		toolbar.setNavigationOnClickListener( view -> finish( ) );
 	}
 
-	public static void setColor( View view, int color ) {
-
-		Drawable buttonDrawable = view.getBackground( );
-		buttonDrawable = DrawableCompat.wrap( buttonDrawable );
-		// the color is a direct color int and not a color resource
-		DrawableCompat.setTint( buttonDrawable, color );
-		view.setBackground( buttonDrawable );
-	}
-
-	private int[] getGridPos( int x, int y ) {
-		return new int[]{ 0, 0 };
-	}
-
-	private void runTransitionToPos( int x, int y, boolean playerOne ) {
-		ImageView hiddenImage = pieceGrid[x][y];
-
-
-	}
-
-	@RequiresApi(api = Build.VERSION_CODES.O)
 	private void initSquares( ) {
 
-		int panelHeight = connectFourGame.getPanelHeight( );
-		int panelWidth = connectFourGame.getPanelWidth( );
+		int panelHeight = connectGame.getPanelHeight( );
+		int panelWidth = connectGame.getPanelWidth( );
 
 		double gridLayoutHeight = gridLayout.getMeasuredHeight( );
 
@@ -164,41 +107,88 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		for( int height = 0; height < panelHeight; height++ ) {
 			for( int width = 0; width < panelWidth; width++ ) {
 
-				ImageView curGridPos = new ImageView( this );
+				piecePanel[height][width] = new ImageView( this );
 				String gridPosText = height + "_" + width;
-				curGridPos.setTooltipText( gridPosText );
+				piecePanel[height][width].setTooltipText( gridPosText );
 
-				curGridPos.setOnClickListener( ( v ) -> {
-					Log.e( "ONCLICK", gridPosText + ":clicked: " + curGridPos.getTooltipText( ) );
+				piecePanel[height][width].setOnClickListener( ( v ) -> {
+					Log.e( "ONCLICK", gridPosText );
 					gridPosClicked( v );
 				} ); // gridPosClicked
 
-				curGridPos.setBackgroundResource( R.drawable.piece );
-				Drawable buttonDrawable = curGridPos.getBackground( );
-				buttonDrawable = DrawableCompat.wrap( buttonDrawable );
-				// the color is a direct color int and not a color resource
-				DrawableCompat.setTint( buttonDrawable, Color.BLUE );
-				curGridPos.setBackground( buttonDrawable );
+				piecePanel[height][width].setBackgroundResource( R.drawable.piece );
 
-				curGridPos.setMinimumWidth( squareSize );
-				curGridPos.setMaxWidth( squareSize );
+				ConnectGame.setBGColor( piecePanel[height][width], Color.BLUE );
 
-				curGridPos.setMinimumHeight( squareSize );
-				curGridPos.setMaxHeight( squareSize );
+				piecePanel[height][width].setMinimumWidth( squareSize );
+				piecePanel[height][width].setMaxWidth( squareSize );
 
-				pieceGrid[height][width] = curGridPos;
+				piecePanel[height][width].setMinimumHeight( squareSize );
+				piecePanel[height][width].setMaxHeight( squareSize );
+
+				ImageView curGridPos = piecePanel[height][width];
 
 				new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.addView( curGridPos ) );
 			}
 		}
 	}
 
-	private void initToolbar( ) {
+	public void gridPosClicked( View view ) {
 
-		Toolbar toolbar = findViewById( R.id.edit_toolbar );
-		toolbar.setTitle( "" );
-		toolbar.setNavigationIcon( ContextCompat.getDrawable( this, R.drawable.back_arrow ) );
-		toolbar.setNavigationOnClickListener( view -> finish( ) );
+		if( !timerStarted )
+			timerStarted = connectGame.startTimer( );
+
+		String toolTipText = view.getTooltipText( ).toString( );
+
+		// set bottom of that column to be person's turn
+
+		ImageView currentPosition = (ImageView) view;
+
+		if( currentPosition != null ) {
+
+			int[] pos = getGridPos( toolTipText );
+
+			playPiece( pos[0], pos[1], connectGame.togglePlayerTurn( ) );
+		}
+	}
+
+	/**
+	 * @param pieceXPos the x position or column in the connect game panel
+	 * @param pieceYPos the y position or row in the connect game panel
+	 * @param playerOne whether it is player one's turn
+	 * @returns if the play was successful
+	 */
+	public boolean playPiece( int pieceXPos, int pieceYPos, boolean playerOne ) {
+
+		int pieceTargetPosition = connectGame.nextAvailablePos( pieceXPos )[1];
+		if( pieceTargetPosition == -1 )
+			return false;
+
+
+			/*
+			// transition
+			ImageView hiddenImage = new ImageView( this );
+			float x = piecePanel[0][pieceXPos].getX( );
+			hiddenImage.setX( x );
+
+			ConnectGame.setBGColor( hiddenImage, playerOne ? Color.RED : Color.YELLOW );
+*/
+		//
+
+		ConnectGame.setBGColor( piecePanel[pieceTargetPosition][pieceXPos], playerOne ? Color.RED : Color.YELLOW );
+		connectGame.setState( pieceTargetPosition, pieceXPos, playerOne ? ConnectGame.PositionState.PLAYER_ONE : ConnectGame.PositionState.PLAYER_TWO );
+
+
+		return true;
+	}
+
+	/**
+	 * @param gridPosToolTip the toolTipText of a grid position
+	 * @return the x and y positions of a grid position where x = int[0] and y = int[1]
+	 */
+	private int[] getGridPos( @NonNull String gridPosToolTip ) {
+
+		return new int[]{ Integer.parseInt( gridPosToolTip.substring( 2, 3 ) ), Integer.parseInt( gridPosToolTip.substring( 0, 1 ) ) };
 	}
 
 
