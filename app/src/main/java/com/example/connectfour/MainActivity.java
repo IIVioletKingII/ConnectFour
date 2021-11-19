@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.connectfour.databinding.ActivityMainBinding;
 
@@ -44,10 +45,16 @@ public class MainActivity extends AppCompatActivity {
 	public void playGame( ) {
 
 		// create game based on entered sizes
-		connectGame = new ConnectGame( getViewInt( editBoardHeight ), getViewInt( editBoardWidth ), getViewInt( editWinningConnect ) );
-
-		// open the activity for the game
-		openGame( );
+		int newHeight = getViewInt( editBoardHeight );
+		int newWidth = getViewInt( editBoardWidth );
+		int newConnect = getViewInt( editWinningConnect );
+		if( newHeight > newConnect && newWidth > newConnect && newConnect > 2 ) {
+			connectGame = new ConnectGame( newHeight, newWidth, newConnect );
+			// open the activity for the game
+			openGame( );
+		} else {
+			Toast.makeText( this, "Invalid Dimensions", Toast.LENGTH_SHORT ).show( );
+		}
 	}
 
 	public static int getViewInt( EditText text ) {

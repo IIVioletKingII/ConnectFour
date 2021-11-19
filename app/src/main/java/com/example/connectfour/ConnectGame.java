@@ -23,6 +23,8 @@ public class ConnectGame {
 
 	private final int winningConnect;
 
+	private boolean won = false;
+
 	private final PositionState[][] positionPanel;
 
 	private ImageView[][] piecePanel;
@@ -109,7 +111,7 @@ public class ConnectGame {
 		return !playerOneTurn;
 	}
 
-	public boolean startTimer( ) {
+	public void startTimer( ) {
 
 		timeKeeper = new TimerUtil( decimals );
 		timeKeeper.start( );
@@ -122,7 +124,10 @@ public class ConnectGame {
 				new Handler( Looper.getMainLooper( ) ).post( ( ) -> titleView.setText( headerText ) );
 			}
 		}, 0, 1 );
-		return true;
+	}
+
+	public void stopTimer( ) {
+		gameTimer.cancel( );
 	}
 
 	/**
@@ -158,8 +163,15 @@ public class ConnectGame {
 		return positionPanel[row][column];
 	}
 
+	public boolean won( ) {
+		return won;
+	}
+
 	public WinningState checkWinner( ) {
-		return new ConnectChecker( panelWidth, panelHeight, winningConnect, positionPanel ).checkWinner( );
+		WinningState winner = new ConnectChecker( panelWidth, panelHeight, winningConnect, positionPanel ).checkWinner( );
+		if( winner != null && winner != WinningState.NONE )
+			won = true;
+		return winner;
 	}
 
 	public static void setBGColor( View view, int color ) {

@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 
 import android.animation.ObjectAnimator;
@@ -20,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,7 +28,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 	private ConnectGame connectGame;
 
 	public int squareSize = 0;
-	public int layoutBorder = 15;
+	public int layoutBorder = 16;
 
 	private ImageView[][] piecePanel;
 
@@ -66,8 +66,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 		gridLayout.setOnClickListener( ( v ) -> {
 
-			if( !timerStarted )
-				timerStarted = connectGame.startTimer( );
+			if( !timerStarted ) {
+				timerStarted = true;
+				connectGame.startTimer( );
+			}
 		} );
 	}
 
@@ -97,7 +99,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		int pixelHeight = (int) (gridLayoutHeight / panelHeight - 2 * layoutBorder);
 		int pixelWidth = (int) (gridLayoutWidth / panelWidth - 2 * layoutBorder);
 
-		squareSize = panelWidth > panelHeight ? pixelWidth : pixelHeight;
+		squareSize = Math.min( pixelWidth, pixelHeight );
 
 		new Handler( Looper.getMainLooper( ) ).post( ( ) -> gridLayout.removeAllViews( ) );
 
@@ -151,21 +153,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 	public void gridPosClicked( View view ) {
 
-		if( !timerStarted )
-			timerStarted = connectGame.startTimer( );
-
-		String toolTipText = view.getTooltipText( ).toString( );
+		if( !timerStarted ) {
+			timerStarted = true;
+			connectGame.startTimer( );
+		}
 
 		// set bottom of that column to be person's turn
 
-		ImageView currentPosition = (ImageView) view;
-
-		if( currentPosition != null ) {
-
-			int[] pos = getGridPos( toolTipText );
+		if( !connectGame.won( ) ) {
+			int[] pos = getGridPos( view.getTooltipText( ).toString( ) );
 
 			playPiece( pos[0], pos[1], connectGame.togglePlayerTurn( ) );
 		}
+
+		checkSquareForWin( );
+
 	}
 
 	/**
@@ -184,22 +186,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 		// transition
 		ImageView hiddenImage = createBasicSquare( );
-//		hiddenImage.setY( 100f );
 		ConnectGame.setBGColor( hiddenImage, playerOne ? Color.RED : Color.YELLOW );
 
 		layout.addView( hiddenImage );
-//		new Handler( Looper.getMainLooper( ) ).post( ( ) ->  );
 
-		hiddenImage.setX( piecePanel[0][pieceXPos].getX( ) );
+		hiddenImage.setX( layout.getX( ) + piecePanel[0][pieceXPos].getX( ) );
 		hiddenImage.setY( 0 );
 
 		//=================
 
 		long waitTime = 750;
 
-		ObjectAnimator animation = ObjectAnimator.ofFloat( hiddenImage, "translationY", piecePanel[pieceTargetPosition][pieceXPos].getY( ) + /*squareSize +*/ (1f * squareSize) + 2 * layoutBorder );
+		float targetPosition = piecePanel[pieceTargetPosition][pieceXPos].getY( ) + 260 - 90 - layoutBorder;
+		ObjectAnimator animation = ObjectAnimator.ofFloat( hiddenImage, "translationY", 0, targetPosition );
 		animation.setDuration( waitTime );
 		animation.start( );
+
+//		Log.e( "LOGGER", "layout y: " + layout.getTranslationY() );
+		Log.e( "LOGGER", "top y: " + piecePanel[0][pieceXPos].getY( ) );
+		Log.e( "LOGGER", "og y: " + piecePanel[pieceTargetPosition][pieceXPos].getY( ) );
+		Log.e( "LOGGER", "targetPosition: " + targetPosition );
 
 		connectGame.setState( pieceTargetPosition, pieceXPos, playerOne ? ConnectGame.PositionState.PLAYER_ONE : ConnectGame.PositionState.PLAYER_TWO );
 
@@ -212,10 +218,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 		//=================
 
-
-//		hiddenImage.remo
-
 		return true;
+	}
+
+	public void checkSquareForWin( ) {
+		ConnectGame.WinningState winningState = connectGame.checkWinner( );
+		if( winningState == ConnectGame.WinningState.NONE )
+			return;
+
+		connectGame.stopTimer( );
+
+		String winner = ("" + winningState).toLowerCase( ).replace( "_", " " ).replace( "p", "P" );
+
+		Toast.makeText( this, winner + " wins!", Toast.LENGTH_SHORT ).show( );
+
 	}
 
 	/**
