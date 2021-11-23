@@ -160,11 +160,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 		// set bottom of that column to be person's turn
 
-		if( !connectGame.won( ) ) {
-			int[] pos = getGridPos( view.getTooltipText( ).toString( ) );
-
-			playPiece( pos[0], pos[1], connectGame.togglePlayerTurn( ) );
-		}
+		if( !connectGame.won( ) )
+			if( !playPiece( getGridPos( view.getTooltipText( ).toString( ) )[0], connectGame.togglePlayerTurn( ) ) )
+				Log.e( "PLAY_PIECE", "Failed to find the next available position" );
 
 		checkSquareForWin( );
 
@@ -172,11 +170,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
 	/**
 	 * @param pieceXPos the x position or column in the connect game panel
-	 * @param pieceYPos the y position or row in the connect game panel
 	 * @param playerOne whether it is player one's turn
 	 * @returns if the play was successful
 	 */
-	public boolean playPiece( int pieceXPos, int pieceYPos, boolean playerOne ) {
+	public boolean playPiece( int pieceXPos, boolean playerOne ) {
 
 		int pieceTargetPosition = connectGame.nextAvailablePos( pieceXPos )[1];
 		if( pieceTargetPosition == -1 )
@@ -202,7 +199,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		animation.setDuration( waitTime );
 		animation.start( );
 
-//		Log.e( "LOGGER", "layout y: " + layout.getTranslationY() );
 		Log.e( "LOGGER", "top y: " + piecePanel[0][pieceXPos].getY( ) );
 		Log.e( "LOGGER", "og y: " + piecePanel[pieceTargetPosition][pieceXPos].getY( ) );
 		Log.e( "LOGGER", "targetPosition: " + targetPosition );
@@ -215,8 +211,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 			ConnectGame.setBGColor( piecePanel[pieceTargetPosition][pieceXPos], playerOne ? Color.RED : Color.YELLOW );
 			new Handler( Looper.getMainLooper( ) ).post( ( ) -> layout.removeView( hiddenImage ) );
 		} ).start( );
-
-		//=================
 
 		return true;
 	}

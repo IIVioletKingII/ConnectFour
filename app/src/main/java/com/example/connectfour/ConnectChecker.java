@@ -22,14 +22,14 @@ public class ConnectChecker {
 
 		ConnectGame.WinningState winner = ConnectGame.WinningState.NONE;
 
-		for( int column = 0; column < panelWidth; column++ ) { // width
-			for( int row = 0; row < panelHeight; row++ ) { // height
+		for( int row = 0; row < panelHeight; row++ ) { // the row you are checking
+			for( int column = 0; column < panelWidth; column++ ) { // the column you are checking
 				ConnectGame.PositionState currentState = positionPanel[row][column];
 				if( currentState != ConnectGame.PositionState.EMPTY ) {
 
 					// connects found
 					boolean vertical = false, horizontal = false;
-					boolean angleRight = false, angleLeft = false;
+					boolean angleLeft = false, angleRight = false;
 
 					// need three spots in said direction when checking for connects
 					boolean spotsBelow = row < panelHeight - winningConnect + 1;
@@ -38,16 +38,16 @@ public class ConnectChecker {
 
 					// if there enough positions in the if-statement's direction, check for said connect:
 					if( spotsBelow )
-						vertical = findVerticalConnect( column, row );
+						vertical = findVerticalConnect( row, column );
 
 					if( spotsRight )
-						horizontal = findHorizontalConnect( column, row );
-
-					if( spotsBelow && spotsRight )
-						angleRight = findAngledRightConnect( column, row );
+						horizontal = findHorizontalConnect( row, column );
 
 					if( spotsBelow && spotsLeft )
-						angleLeft = findAngledLeftConnect( column, row );
+						angleLeft = findAngledLeftConnect( row, column );
+
+					if( spotsBelow && spotsRight )
+						angleRight = findAngledRightConnect( row, column );
 
 					// if any of the methods found a connect, set the winner to the current position
 					if( vertical || horizontal || angleRight || angleLeft )
@@ -62,57 +62,85 @@ public class ConnectChecker {
 	/**
 	 * [a][b][c][d] -> a == b && a == c && a == d
 	 *
+	 * will throw a NullPointerLocation if the row and column provided would result in a connect of pieces that is out of bounds
+	 *
 	 * @param row - the horizontal position in the panel
 	 * @param col - the vertical position in the panel to start at
 	 * @return if there is a vertical connect starting in this space going down three more spaces
 	 */
-	private boolean findVerticalConnect( int col, int row ) {
+	private boolean findVerticalConnect( int row, int col ) {
 
 		ConnectGame.PositionState start = positionPanel[row][col];
-		boolean fits = positionPanel.length > row + (winningConnect - 1);
-		return start != ConnectGame.PositionState.EMPTY &&   /* fits && */   start == positionPanel[row + 1][col] && start == positionPanel[row + 2][col] && start == positionPanel[row + 3][col];
+		if( start == ConnectGame.PositionState.EMPTY )
+			return false;
+
+		for( int i = 0; i < winningConnect; i++ )
+			if( start != positionPanel[row + i][col] )
+				return false;
+		return true;
 	}
 
 	/**
 	 * [a][b][c][d] -> a == b && a == c && a == d
+	 *
+	 * will throw a NullPointerLocation if the row and column provided would result in a connect of pieces that is out of bounds
 	 *
 	 * @param row - the horizontal position in the panel to start at
 	 * @param col - the vertical position in the panel
 	 * @return if there is a horizontal connect starting in this space going right three more spaces
 	 */
-	private boolean findHorizontalConnect( int col, int row ) {
+	private boolean findHorizontalConnect( int row, int col ) {
 
 		ConnectGame.PositionState start = positionPanel[row][col];
-		boolean fits = positionPanel[0].length > col + (winningConnect - 1);
-		return start != ConnectGame.PositionState.EMPTY &&   /* fits && */   start == positionPanel[row][col + 1] && start == positionPanel[row][col + 2] && start == positionPanel[row][col + 3];
+		if( start == ConnectGame.PositionState.EMPTY )
+			return false;
+
+		for( int i = 0; i < winningConnect; i++ )
+			if( start != positionPanel[row][col + i] )
+				return false;
+		return true;
 	}
 
 	/**
 	 * [a][b][c][d] -> a == b && a == c && a == d
 	 *
+	 * will throw a NullPointerLocation if the row and column provided would result in a connect of pieces that is out of bounds
+	 *
 	 * @param row - the horizontal position in the panel to start at
 	 * @param col - the vertical position in the panel to start at
-	 * @return if there is a horizontal connect starting in this space going down and right three more spaces
+	 * @return if there is a connect starting in this space going down and right winningConnect - 1 more spaces
 	 */
-	private boolean findAngledRightConnect( int col, int row ) {
+	private boolean findAngledRightConnect( int row, int col ) {
 
 		ConnectGame.PositionState start = positionPanel[row][col];
-		boolean fits = positionPanel.length > row + (winningConnect - 1) && positionPanel[0].length > col + (winningConnect - 1);
-		return start != ConnectGame.PositionState.EMPTY &&   /* fits && */   start == positionPanel[row + 1][col + 1] && start == positionPanel[row + 2][col + 2] && start == positionPanel[row + 3][col + 3];
+		if( start == ConnectGame.PositionState.EMPTY )
+			return false;
+
+		for( int i = 0; i < winningConnect; i++ )
+			if( start != positionPanel[row + i][col + i] )
+				return false;
+		return true;
 	}
 
 	/**
 	 * [a][b][c][d] -> a == b && a == c && a == d
 	 *
+	 * will throw a NullPointerLocation if the row and column provided would result in a connect of pieces that is out of bounds
+	 *
 	 * @param row - the horizontal position in the panel to start at
 	 * @param col - the vertical position in the panel to start at
-	 * @return if there is a horizontal connect starting in this space going down and left three more spaces
+	 * @return if there is a connect starting in this space going down and left winningConnect - 1 more spaces
 	 */
-	private boolean findAngledLeftConnect( int col, int row ) {
+	private boolean findAngledLeftConnect( int row, int col ) {
 
 		ConnectGame.PositionState start = positionPanel[row][col];
-		boolean fits = positionPanel.length > row + (winningConnect - 1) && 0 <= col - (winningConnect - 1);
-		return start != ConnectGame.PositionState.EMPTY &&   /* fits && */   start == positionPanel[row + 1][col - 1] && start == positionPanel[row + 2][col - 2] && start == positionPanel[row + 3][col - 3];
+		if( start == ConnectGame.PositionState.EMPTY )
+			return false;
+
+		for( int i = 0; i < winningConnect; i++ )
+			if( start != positionPanel[row + i][col - i] )
+				return false;
+		return true;
 	}
 
 }
